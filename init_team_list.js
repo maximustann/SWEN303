@@ -15,7 +15,7 @@ var team_name_list = Array("Central Pulse,New Zealand",
 
 
 
-function team_info(name, coun, win, lost, venue, home, away, rate, final_score, goal_percentage, ranking){
+function team_info(name, coun, win, lost, venue, home, away, rate, final_score, goal_percentage, ranking, final_series){
 	this.name = name
 	this.coun = coun
 	this.venue = venue
@@ -27,6 +27,7 @@ function team_info(name, coun, win, lost, venue, home, away, rate, final_score, 
 	this.regular_final_score = final_score
 	this.goal_percentage = goal_percentage
 	this.ranking = ranking
+	this.final_series = final_series
 }
 
 function home(result, win_per, lost_per){
@@ -50,6 +51,22 @@ function vs_result(name, host_score, rival_score, diff, lost_or_win, round){
 	this.round = round
 }
 
+function final_series(semi_final, preliminary, final_game){
+	this.semi_final = semi_final
+	this.preliminary = preliminary
+	this.final_game = final_game
+}
+
+function final_games(home_or_away, name, home_score, rival_score, diff, lost_or_win, round){
+	this.home_or_away = home_or_away
+	this.rival_name = name
+	this.this_score = home_score
+	this.rival_score = rival_score
+	this.diff = diff
+	this.lost_or_win = lost_or_win
+	this.round = round
+}
+
 function init_team_list() {
 	var i = 0
 	for(i = 0; i < team_name_list.length; i++)
@@ -60,10 +77,6 @@ function init_team_list() {
 											0, 0, "")
 	}
 }
-
-
-
-
 
 function init_venues(data){
 		var i = j = 0
@@ -293,7 +306,8 @@ function _away_score(away){
 }
 
 function init_basic_info(data){
-	for(var i = 0; i < team_list.length; i++)
+	var i = 0
+	for(i = 0; i < team_list.length; i++)
 	{
 		init_home(data, team_list[i])
 		init_away(data, team_list[i])
@@ -304,6 +318,9 @@ function init_basic_info(data){
 		init_goal_percentage(team_list[i])
 	}
 	init_regular_ranking(team_list)
+	for(i = 0; i < team_list.length; i++){
+		init_final_series(team_list[i])
+	}
 }
 
 
@@ -458,5 +475,91 @@ function _sort(team_lt){
 	}
 }
 
-function init_final_series(){
+function init_final_series(team_info){
+		
+	if(team_info.ranking > 4){
+		return
+	}
+	else
+	{
+		_semi(team_info)
+		if(team_info.final_series.semi_final.lost_or_win == "win" || team_info.ranking > 2)
+		{
+			_pre_final(team_info)
+		}
+		if((team_info.final_series.semi_final.lost_or_win == "win" && team_info.ranking < 3) || (team_info.final_series.preliminary != undefined && team_info.final_series.preliminary.lost_or_win == "win"))
+		{
+			_final(team_info)
+		}
+	}
 }
+
+function _final(team_info){
+	var final_game = new final_games()
+	for(i = 0; i < team_info.home.result.length; i++){
+		if(team_info.home.result[i].round == 17){
+			final_game.home_or_away = "home"
+			_copy_info(final_game, team_info.home.result[i])
+		}
+	}
+	for(i = 0; i < team_info.away.result.length; i++){
+		if(team_info.away.result[i].round == 17){
+			final_game.home_or_away = "away"
+			_copy_info(final_game, team_info.away.result[i])
+		}
+	}
+	team_info.final_series.final_game = final_game
+
+}
+
+function _pre_final(team_info){
+	var final_game = new final_games()
+	for(i = 0; i < team_info.home.result.length; i++){
+		if(team_info.home.result[i].round == 16){
+			final_game.home_or_away = "home"
+			_copy_info(final_game, team_info.home.result[i])
+		}
+	}
+	for(i = 0; i < team_info.away.result.length; i++){
+		if(team_info.away.result[i].round == 16){
+			final_game.home_or_away = "away"
+			_copy_info(final_game, team_info.away.result[i])
+		}
+	}
+	team_info.final_series.preliminary = final_game
+}
+
+function _semi(team_info){
+	var final_s = new final_series()
+	final_s.semi_final = __init_semi(team_info, final_s)
+	team_info.final_series = final_s
+}
+
+function __init_semi(team_info, final_s){
+	var final_game = new final_games()
+	var i = 0
+	for(i = 0; i < team_info.home.result.length; i++){
+		if(team_info.home.result[i].round == 15){
+			final_game.home_or_away = "home"
+			_copy_info(final_game, team_info.home.result[i])
+			return final_game
+		}
+	}
+	for(i = 0; i < team_info.away.result.length; i++){
+		if(team_info.away.result[i].round == 15){
+			final_game.home_or_away = "away"
+			_copy_info(final_game, team_info.away.result[i])
+			return final_game
+		}
+	}
+}
+
+function _copy_info(final_game, result){
+	final_game.rival_name = result.rival_name
+	final_game.this_score = result.this_score
+	final_game.rival_score = result.rival_score
+	final_game.diff = result.diff
+	final_game.lost_or_win = result.lost_or_win
+	final_game.round = result.round
+}
+
