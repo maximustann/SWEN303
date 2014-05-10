@@ -235,7 +235,7 @@ function cal_win(team_info){
 	var home_win = _cal_home(team_info.home)
 	var away_win = _cal_away(team_info.away)
 	team_info.win = home_win + away_win
-	team_info.lost = game_num - team_info.win
+	team_info.lost = 13 - team_info.win
 }
 
 function _cal_home(home){
@@ -244,7 +244,9 @@ function _cal_home(home){
 	for(;i < home.result.length; i++){
 		if(home.result[i].lost_or_win == "win")
 		{
-			win++
+			if(home.result[i].round < 15){
+				win++
+			}
 		}
 	}
 	return win
@@ -256,7 +258,9 @@ function _cal_away(away){
 	for(;i < away.result.length; i++){
 		if(away.result[i].lost_or_win == "win")
 		{
-			win++
+			if(away.result[i].round < 15){
+				win++
+			}
 		}
 	}
 	return win
