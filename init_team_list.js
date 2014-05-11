@@ -42,13 +42,15 @@ function away(result, win_per, lost_per){
 	this.lost_percentage = lost_per
 }
 
-function vs_result(name, host_score, rival_score, diff, lost_or_win, round){
+function vs_result(name, host_score, rival_score, diff, lost_or_win, round, round_rank, round_score, round_percent){
 	this.rival_name = name
 	this.this_score = host_score
 	this.rival_score = rival_score
 	this.diff = diff
 	this.lost_or_win = lost_or_win
 	this.round = round
+	this.round_score = round_score
+	this.round_percent = round_percent
 }
 
 function final_series(semi_final, preliminary, final_game){
@@ -322,6 +324,7 @@ function init_basic_info(data){
 		init_goal_percentage(team_list[i])
 	}
 	init_regular_ranking(team_list)
+	init_round_score(team_list)
 	for(i = 0; i < team_list.length; i++){
 		init_final_series(team_list[i])
 	}
@@ -413,6 +416,42 @@ function init_regular_ranking(team_list){
 	_init_rank(team_list, s_team_list)
 }
 
+
+function init_round_score(team_list){
+	var i = 0
+	
+	for(i = 0; i < team_list.length; i++){
+		_init_round_score(team_list[i])
+	}
+}
+
+function _init_round_score(team_info){
+	var j = h = k = 0
+	var score = 0
+	for(; j < 15; j++){
+		if(team_info.away.result[k] != undefined){
+			if(team_info.away.result[k].round == j){
+				if(team_info.away.result[k].lost_or_win == "win"){
+					score += 2
+				}
+				team_info.away.result[k].round_score = score
+				team_info.away.result[k].round_percent = (team_info.away.result[k].this_score / team_info.away.result[k].rival_score * 100).toFixed(2)
+				k += 1
+			}
+		}
+		if(team_info.home.result[h] != undefined){
+			if(team_info.home.result[h].round  == j){
+				if(team_info.home.result[h].lost_or_win == "win"){
+					score += 2
+					team_info.home.result[h].round_score = score
+				}
+				team_info.home.result[h].round_score = score
+				team_info.home.result[h].round_percent = (team_info.home.result[h].this_score / team_info.home.result[h].rival_score * 100).toFixed(2)
+				h += 1
+			}
+		}
+	}
+}
 function _init_rank(team_list, s_team_list){
 	var i = j = 0
 	for(; i < team_list.length; i++){
