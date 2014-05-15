@@ -1,0 +1,198 @@
+<html>
+  <head>
+  	<meta charset="utf-8">
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script src="./d3/d3.js"></script>
+	<script src="init_team_list.js"></script>
+ 	 <script type="text/javascript">
+    </script>
+	<style type="text/css">
+		div{
+		display: inline-block;
+	}	
+	</style>
+  </head>
+  <body>
+  		<select>
+		<option  id="team" value=1>Central Pulse</option>
+		<option  id="team" value=2>Northern Mystics</option>
+		<option  id="team" value=3>Waikato Bay of Plenty Magic</option>
+		<option  id="team" value=4>Southern Steel</option>
+		<option  id="team" value=5>Canterbury Tactix</option>
+		<option  id="team" value=6>New South Wales Swifts</option>
+		<option  id="team" value=7>Adelaide Thunderbirds</option>
+		<option  id="team" value=8>Melbourne Vixens</option>
+		<option  id="team" value=9>West Coast Fever</option>
+		<option  id="team" value=10>Queensland Firebirds</option>
+	</select>
+	<select>
+		<option  id="year" value=2008>2008</option>
+		<option  id="year" value=2009>2009</option>
+		<option  id="year" value=2010>2010</option>
+		<option  id="year" value=2011>2011</option>
+		<option  id="year" value=2012>2012</option>
+		<option  id="year" value=2013>2013</option>
+	</select>
+
+ 	<script>
+		var choose_team = "Central Pulse"
+		var choose_year = "2008"
+		draw_pie()
+		d3.selectAll("#year")
+			.on("click", function() {
+						var choice = d3.select(this).attr("value")
+						switch(choice){
+							case "2008":
+								choose_year = 2008
+								draw_pie()
+								break;
+							case "2009":
+								choose_year = 2009
+								draw_pie()
+								break;
+							case "2010":
+								choose_year = 2010
+								draw_pie()
+								break;
+							case "2011":
+								choose_year = 2011
+								draw_pie()
+								break;
+							case "2012":
+								choose_year = 2012
+								draw_pie()
+								break;
+							case "2013":
+								choose_year = 2013
+								draw_pie()
+						}
+					})
+
+		d3.selectAll("#team")
+			.on("click", function() {
+						var choice = d3.select(this).attr("value")
+					switch(choice){
+							case "1":
+								choose_team = "Central Pulse"
+								draw_pie()
+								break;
+							case "2":
+								choose_team = "Northern Mystics"
+								draw_pie()
+								break;
+							case "3":
+								choose_team = "Waikato Bay of Plenty Magic"
+								draw_pie()
+								break;
+							case "4":
+								choose_team = "Southern Steel"
+								draw_pie()
+								break;
+							case "5":
+								choose_team = "Canterbury Tactix"
+								draw_pie()
+								break;
+							case "6":
+								choose_team = "New South Wales Swifts"
+								draw_pie()
+								break
+							case "7":
+								choose_team = "Adelaide Thunderbirds"
+								draw_pie()
+								break
+							case "8":
+								choose_team = "Melbourne Vixens"
+								draw_pie()
+								break
+							case "9":
+								choose_team = "West Coast Fever"
+								draw_pie()
+								break
+							case "10":
+								choose_team = "Queensland Firebirds"
+								draw_pie()
+								break
+						}
+					})
+
+	console.log("he")
+	google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(draw_pie);
+  	function draw_pie(){
+		d3.csv(choose_year+ "_new_Table1.csv", function(data) {
+		init_team_list()
+		init_basic_info(data)
+		console.log(data)
+
+		
+	for(var i = 0; i < team_list.length; i++){
+		if(team_list[i].name == choose_team){
+			break
+		}
+	}
+
+        var data = google.visualization.arrayToDataTable([
+          ['Win_or_Lost', "Total winning"],
+          ['Win',     parseInt(team_list[i].win_rate * 100)],
+          ['Lost',    parseInt((1 - team_list[i].win_rate) * 100)],
+        ]);
+        var data_2 = google.visualization.arrayToDataTable([
+          ['Win_or_Lost', team_list[i].name + " Home winning"],
+          ['Win',    parseInt(team_list[i].home.win_percentage * 100)],
+          ['Lost',   parseInt((1 - team_list[i].home.win_percentage) * 100)],
+        ]);
+		var data_3 = google.visualization.arrayToDataTable([
+          ['Win_or_Lost', team_list[i].name + " Away winning"],
+          ['Win',    parseInt(team_list[i].away.win_percentage * 100)],
+          ['Lost',   parseInt((1 - team_list[i].away.win_percentage) * 100)],
+        ]);
+
+        var options = {
+          title: "Total Percentage",
+			slices: {
+				0: {color: '#FF3399'},
+				1: {color: '#0099FF'}
+			},	
+			pieStartAngle: 100,
+			animation:{ duration: 500,
+						easing: 'out',
+			}
+        };
+		
+		var options_2 = {
+          title: "Home Percentage",
+			slices: {
+				0: {color: '#FF3399'},
+				1: {color: '#0099FF'}
+			},
+			pieStartAngle: 100,
+			animation:{ duration: 500,
+						easing: 'out',
+			}
+        };
+		var options_3 = {
+		title: "Away Percentage",
+		  slices: {
+			  0: {color: '#FF3399'},
+			  1: {color: '#0099FF'}
+		  },
+			pieStartAngle: 100,
+			animation:{ duration: 500,
+						easing: 'out',
+			}
+		};
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
+        var chart = new google.visualization.PieChart(document.getElementById('piechart_2'));
+		chart.draw(data_2, options_2)
+        var chart = new google.visualization.PieChart(document.getElementById('piechart_3'));
+		chart.draw(data_3, options_3)
+      })
+	}
+	</script>
+    <div id="piechart" style="width: 400px; height: 400px;"></div>
+    <div id="piechart_2" style="width: 400px; height: 400px;"></div>
+    <div id="piechart_3" style="width: 400px; height: 400px;"></div>
+  </body>
+</html>

@@ -1,0 +1,196 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<script type="text/javascript" src="./d3/d3.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script src="init_team_list.js"></script>
+	<style>
+		select {
+			font-family: ubuntu;
+			font-size: 20px;
+		}
+		#year {
+			font-family: ubuntu;
+			font-size: 20px;
+		}
+	</style>
+</head>
+<body>
+	<select>
+		<option id="year" value="2008">2008</option>
+		<option id="year" value="2009">2009</option>
+		<option id="year" value="2010">2010</option>
+		<option id="year" value="2011">2011</option>
+		<option id="year" value="2012">2012</option>
+		<option id="year" value="2013">2013</option>
+	</select>
+	<script>
+	
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+	  var year = 2008
+	  drawChart()
+
+	d3.selectAll("#year")
+			.on("click", function() {
+				year = d3.select(this).attr("value")	
+				switch(year){
+					case "2008": drawChart(); break;
+					case "2009": drawChart(); break;			
+					case "2010": drawChart(); break;			
+					case "2011": drawChart(); break;			
+					case "2012": drawChart(); break;			
+					case "2013": drawChart(); break;			
+							
+				}	
+			})
+
+
+
+function drawChart() {
+		d3.csv(year + "_new_Table1.csv", function(data) {
+			init_team_list()
+			init_basic_info(data)
+			function win_rival(name, num_of_win){
+				this.name = name
+				this.num_of_win = num_of_win
+			}
+			var win_rival_list = new Array()
+			for(var i = 0; i < team_list.length; i++){
+				win_rival_list[i] = new win_rival(team_list[i].name)
+			}
+			for(var i = 0; i < team_list.length; i++){
+				win_rival_list[i].num_of_win = home_win_rival(team_list[i]) + away_win_rival(team_list[i])
+			}
+			ar = win_rival_list 
+		
+          var data = google.visualization.arrayToDataTable([
+          ['Year', win_rival_list[0].name, win_rival_list[1].name, win_rival_list[2].name, win_rival_list[3].name, win_rival_list[4].name, win_rival_list[5].name, win_rival_list[6].name,win_rival_list[7].name,win_rival_list[8].name,win_rival_list[9].name],
+          [year, win_rival_list[0].num_of_win,win_rival_list[1].num_of_win,win_rival_list[2].num_of_win, win_rival_list[3].num_of_win, win_rival_list[4].num_of_win,win_rival_list[5].num_of_win, win_rival_list[6].num_of_win, win_rival_list[7].num_of_win, win_rival_list[8].num_of_win, win_rival_list[9].num_of_win],
+		  ]);
+
+		var options = {
+		title: "New Zealand teams Vs. Australian teams",
+        width: 1500,
+        height: 500,
+        legend: { position: 'top', maxLines: 3 },
+	bar: { groupWidth: '75%' },
+		series: [
+				{
+					color: '#0099CC'
+			   },
+				{
+					color: '#336699'
+				},
+				{
+					color: '#0066CC'
+				},
+				{
+					color: '#003399'
+				},
+				{
+					color: '#333399'
+				},
+				{
+					color: '#CC3333'
+				},
+				{
+					color: '#FF0033'
+				},
+				{
+					color: '#CC0033'
+				},
+				{
+					color: '#990033'
+				},
+				{
+					color: '#FF6666'
+				},
+		],
+		vAxis:{
+				title: year,
+				textPosition: 'none'
+		},
+        isStacked: true,
+      };
+
+        var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+
+	})
+	function home_win_rival(team_info) {
+		var win = 0
+		if(team_info.coun == "New Zealand"){
+			for(var i = 0; i < team_info.home.result.length; i++){
+				if(lookup(team_info.home.result[i].rival_name, 'Australia')){
+					if(team_info.home.result[i].lost_or_win == "win"){
+						win++
+					}
+				}
+			
+			}
+		}
+		else{
+			for(var i = 0; i < team_info.home.result.length; i++){
+				if(lookup(team_info.home.result[i].rival_name, "New Zealand")){
+					if(team_info.home.result[i].lost_or_win == "win"){
+						win++
+					}		
+				}
+			}
+		}
+		return win
+	}
+
+	function away_win_rival(team_info) {
+		var win = 0
+		if(team_info.coun == "New Zealand"){
+			for(var i = 0; i < team_info.away.result.length; i++){
+				if(lookup(team_info.away.result[i].rival_name, 'Australia')){
+					if(team_info.away.result[i].lost_or_win == "win"){
+						win++
+					}
+				}
+			
+			}
+		}
+		else{
+			for(var i = 0; i < team_info.away.result.length; i++){
+				if(lookup(team_info.away.result[i].rival_name, "New Zealand")){
+					if(team_info.away.result[i].lost_or_win == "win"){
+						win++
+					}		
+				}
+			}
+		}
+		return win
+	}
+
+	function lookup(name, con){
+		for(var i = 0; i < team_list.length; i++){
+			if(name == team_list[i].name){
+				if(con == team_list[i].coun){
+					return true
+				}
+				else{
+					return false
+				}
+			}
+		}
+	}
+	function sleep(milliseconds) {
+		var start = new Date().getTime()
+		for(var i = 0; i < 1e7; i++){
+			if((new Date().getTime() - start) > milliseconds){
+				break
+			}
+		}
+	}
+}
+	</script>
+
+	
+    <div id="chart_div" style="width: 900px; height: 500px;"></div>
+</body>
+</html>
