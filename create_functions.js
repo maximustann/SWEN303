@@ -1,6 +1,7 @@
-function team_score(name, score_list, x, y){
+function team_score(name, score_list, rank){
 	this.name = name
 	this.score_list = score_list
+	this.rank = rank
 }
 
 function score(rival, home_or_away, score, round, lost_or_win = undefined, x = undefined, y = undefined)
@@ -17,10 +18,10 @@ function score(rival, home_or_away, score, round, lost_or_win = undefined, x = u
 function init_score(team_info){
 	var team_sc = new team_score()
 	var score_list = new Array()
-
 	team_sc.name = team_info.name.replace(/ /g, '')
-
+	team_sc.rank = team_info.ranking
 	score_list[0] = new score("0", "home", 0, 0, "win")
+	score_list[18] = new score("0", "home", 0, 0, "win")
 
 	for(var i = 0; i < team_info.away.result.length; i++){
 		var round = team_info.away.result[i].round
