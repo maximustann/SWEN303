@@ -3,6 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<script src="d3/d3.js"></script>
+	<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
 	<script src="init_team_list.js"></script>
 	<script src="create_functions.js"></script>
 	<style>
@@ -64,9 +65,33 @@
 
 		color: #FFF;
 		border-radius: 15px;
-		padding= 5px;
+		padding:5px;
 		box-shadow: inset 0 0 5px rgba(000, 000, 000, 0.5)
 
+	}
+	.d3-tip {
+		line-height: 1px;
+		font-weight: bold;
+		padding: 12px;
+		background: rgba(0, 0, 0, 0.8);
+		color: #fff;
+		border-radius: 2px;
+	}
+	.d3-tip:after {
+		box-sizing: border-box;
+		display: inline;
+		font-size: 10px;
+		width: 100%;
+		line-height: 1;
+		color: rgba(0, 0, 0, 0.8);
+		content: "\25BC";
+		position: absolute;
+		text-align: center;
+	}
+	.d3-tip.n:after {
+		margin: -1px 0 0 0;
+		top: 100%;
+		left: 0;
 	}
 	</style>
 </head>
@@ -87,9 +112,7 @@
 	var right_margin = 100
 	var tick_length = 19
 	var year_tick = 7
-	function key(d){
-		return d.name
-	}
+
 
 
 	var svg = d3.select("body").append("svg")
@@ -182,6 +205,18 @@
 			init_basic_info(data)
 			var dataset = new Array()
 			init_dataset(team_list, dataset)
+			function key(d){
+				return d.name
+			}
+		var tip = d3.tip()
+			.attr("class", "d3-tip")
+			.offset([-10, 0])
+			.html(function(d) {
+				var round = parseInt(d3.mouse(slider_handle.node())[0] / ((width - right_margin) / tick_length))
+				return "<strong>Team Name:</strong> <span style='color:red'>" + key(d) + "</span>" + " " + "<span style='color:lightblue'>" + get_home_or_away(d, round) + "</span>"
+			})
+		svg.call(tip)
+
 			function get_rival_y(d, round){
 				for(var j = 0; j < dataset.length; j++){
 					if(key(dataset[j]) == d.score_list[round].rival){
@@ -272,6 +307,9 @@
 				.attr("xlink:href", function(d, i) {
 				   	return "Images/logos-large/" + key(d) + ".png"
 				})
+				.on("mouseover", tip.show)
+				.on("mouseout", tip.hide)
+
 			function dragMove(d) {
 				var trigger = parseInt(d3.mouse(slider_handle.node())[0] / ((width - right_margin) / tick_length))
 
@@ -291,6 +329,15 @@
 					d3.select("#" + key(dataset[i]))
 						.transition()
 						.duration(1000)
+						.style("opacity", function(d) {
+							var round = parseInt(x / ((width - right_margin) / tick_length))
+							if(get_home_or_away(d, round) == "away"){
+								return 0.5
+							}
+							else{
+								return 1
+							}
+						})
 						.attr("x", function(d) {
 							x = d3.mouse(slider_handle.node())[0]
 							var round = parseInt(x / ((width - right_margin) / tick_length))
@@ -299,6 +346,7 @@
 								return x
 							}
 							else{
+								set_x(d, 0, x)
 								return 0
 							}
 						})
