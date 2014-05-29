@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Pie Chart</title>
+<title>Stack Chart</title>
 <meta charset="utf-8">
 <link type="text/css" rel="stylesheet" href="styles/style.css" />
 <!--[if IE 6]>
@@ -29,9 +29,9 @@
     <!--end nav-->
   </div>
   <!--end header-->
-  <div class="page-headline">Pie Chart</div>
+  <div class="page-headline">Stack Chart</div>
   <div id="main">
-	<iframe src="pie.html" frameborder=0 height=600 width=1450 seamless=seamless scrolling=no></iframe>
+	<iframe src="cal_win.html" frameborder=0 height=600 width=1450 seamless=seamless scrolling=no></iframe>
   </div>
   <!--end main-->
   <div id="footer">

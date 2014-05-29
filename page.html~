@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Pie Chart</title>
+<title>Ladder Table</title>
 <meta charset="utf-8">
 <link type="text/css" rel="stylesheet" href="styles/style.css" />
 <!--[if IE 6]>
@@ -19,9 +19,9 @@
     <div id="nav">
       <ul class="menu">
         <li><a href="index.html">Home</a></li>
-        <li><a href="page.html">Ladder Table</a>
+        <li class="current_page_item"><a href="page.html">Ladder Table</a>
         </li>
-        <li class="current_page_item"><a href="pie_chart.html">Pie Chart</a></li>
+        <li><a href="pie_chart.html">Pie Chart</a></li>
         <li><a href="stack.html">Stack Chart</a></li>
         <li><a href="table.html">Season Table</a></li>
       </ul>
@@ -29,9 +29,14 @@
     <!--end nav-->
   </div>
   <!--end header-->
-  <div class="page-headline">Pie Chart</div>
+  <div class="page-headline">Ladder Table</div>
   <div id="main">
-	<iframe src="pie.html" frameborder=0 height=600 width=1450 seamless=seamless scrolling=no></iframe>
+    <div id="content">
+		<iframe src="bar.html" frameborder=0 height=40 width=630 seamless=seamless scrolling=no></iframe>
+		<iframe src="rank.html" frameborder=0 height=420 width=630 seamless=seamless scrolling=no></iframe>
+    </div>
+    <!--end content-->
+    <!--end sidebar-->
   </div>
   <!--end main-->
   <div id="footer">
