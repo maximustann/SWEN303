@@ -308,8 +308,8 @@
 				   	set_y(d, -1, i * 100)
 				   	return i * 100
 				   })
-				.attr("width", 100)
-				.attr("height", 40)
+				.attr("width", 120)
+				.attr("height", 80)
 				.attr("xlink:href", function(d, i) {
 				   	return "Images/logos-large/" + key(d) + ".png"
 				})
@@ -397,6 +397,9 @@
 										if(round == 18){
 											return get_rank(d)
 										}
+										if(round == 0){
+											return ""
+										}
 										var score = get_score(d, round)
 										if(score == -1){
 											return
@@ -422,7 +425,7 @@
 						})
 						.attr("width", function(d) {
 							var round = parseInt(d3.mouse(slider_handle.node())[0]/ ((width - right_margin) / tick_length))
-							if(round == 18){
+							if(round == 18 || round == 0){
 								return 120
 							}
 							else{
@@ -431,7 +434,7 @@
 						})
 						.attr("height", function(d) {
 							var round = parseInt(d3.mouse(slider_handle.node())[0]/ ((width - right_margin) / tick_length))
-							if(round == 18){
+							if(round == 18 || round == 0){
 								return 80
 							}
 							else{
